@@ -160,10 +160,18 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
 
                         onGroupItemClick(false, (GVH) holder, groupItemIndex);
 
+
+                        for(int i = 0; i < groupItemStatus.size(); i++) {
+                            Boolean status = groupItemStatus.get(i);
+                            if(i != groupItemIndex && status == true) {
+                                    groupItemStatus.set(i, false);
+                                    notifyItemRangeRemoved(i, dataTrees.get(i).getSubItems().size());
+                            }
+                        }
+
                         groupItemStatus.set(groupItemIndex, true);
                         notifyItemRangeInserted(holder.getAdapterPosition() + 1, dt.getSubItems
                                 ().size());
-
 
                     } else {
 
