@@ -1,8 +1,10 @@
 package exp.rusan.secondarylistdemo;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,6 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
      * Set new data for adapter to show. It must be called when set new data.
      *
      * @param data New data
-     *
      */
     public void notifyNewData(List data) {
         setDataTrees(data);
@@ -42,7 +43,6 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
      * Set new data for adapter and notify changing.
      *
      * @param dt New data
-     *
      */
     private final void setDataTrees(List dt) {
         this.dataTrees = dt;
@@ -54,7 +54,6 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
      * Initialize the list to false.
      *
      * @param l The list need to initialize
-     *
      */
     private void initGroupItemStatus(List l) {
         for (int i = 0; i < dataTrees.size(); i++) {
@@ -67,7 +66,6 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
      * Create group item view holder for onCreateViewHolder.
      *
      * @param parent Provided by onCreateViewHolder.
-     *
      */
     public abstract RecyclerView.ViewHolder groupItemViewHolder(ViewGroup parent);
 
@@ -75,7 +73,6 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
      * Create subitem view holder for onCreateViewHolder.
      *
      * @param parent Provided by onCreateViewHolder.
-     *
      */
     public abstract RecyclerView.ViewHolder subItemViewHolder(ViewGroup parent);
 
@@ -100,11 +97,9 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
     /**
      * Update the content of specified group item. The method will called by onBindViewHolder.
      *
-     * @param holder The ViewHolder which should be updated to represent the contents of the
-     *        item at the given position in the data set.
-     *
+     * @param holder         The ViewHolder which should be updated to represent the contents of the
+     *                       item at the given position in the data set.
      * @param groupItemIndex The index of the group item.
-     *
      */
     public abstract void onGroupItemBindViewHolder(RecyclerView.ViewHolder holder, int
             groupItemIndex);
@@ -112,10 +107,9 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
     /**
      * Update the content of specified subitem. The method will called by onBindViewHolder.
      *
-     * @param holder The ViewHolder which should be updated to represent the contents of the
-     *        item at the given position in the data set.
+     * @param holder       The ViewHolder which should be updated to represent the contents of the
+     *                     item at the given position in the data set.
      * @param subItemIndex The index of the subitem.
-     *
      */
     public abstract void onSubItemBindViewHolder(RecyclerView.ViewHolder holder, int
             groupItemIndex, int subItemIndex);
@@ -123,19 +117,17 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
     /**
      * The method will be called when the group item clicked.
      *
-     * @param isExpand whether is expanded or no the group item clicked.
-     * @param holder The holder' s item view clicked.
+     * @param isExpand       whether is expanded or no the group item clicked.
+     * @param holder         The holder' s item view clicked.
      * @param groupItemIndex The index of the group item clicked.
-     *
      */
     public abstract void onGroupItemClick(Boolean isExpand, GVH holder, int groupItemIndex);
 
     /**
      * The method will be called when the subitem clicked.
      *
-     * @param holder The holder' s item view clicked.
+     * @param holder       The holder' s item view clicked.
      * @param subItemIndex The index of the subitem clicked.
-     *
      */
     public abstract void onSubItemClick(SVH holder, int groupItemIndex, int subItemIndex);
 
@@ -146,7 +138,7 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
 
         final DataTree dt = dataTrees.get(itemStatus.getGroupItemIndex());
 
-        if ( itemStatus.getViewType() == ItemStatus.VIEW_TYPE_GROUPITEM ) {
+        if (itemStatus.getViewType() == ItemStatus.VIEW_TYPE_GROUPITEM) {
 
             onGroupItemBindViewHolder(holder, itemStatus.getGroupItemIndex());
 
@@ -156,31 +148,12 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
 
                     int groupItemIndex = itemStatus.getGroupItemIndex();
 
-                    if ( !groupItemStatus.get(groupItemIndex) ) {
+                    if (!groupItemStatus.get(groupItemIndex)) {
 
                         onGroupItemClick(false, (GVH) holder, groupItemIndex);
-
-
-                        for(int i = 0; i < groupItemStatus.size(); i++) {
-                            Boolean status = groupItemStatus.get(i);
-                            if(i != groupItemIndex && status == true) {
-                                    groupItemStatus.set(i, false);
-                                    notifyItemRangeRemoved(i, dataTrees.get(i).getSubItems().size());
-                            }
-                        }
-
-                        groupItemStatus.set(groupItemIndex, true);
-                        notifyItemRangeInserted(holder.getAdapterPosition() + 1, dt.getSubItems
-                                ().size());
-
                     } else {
 
                         onGroupItemClick(true, (GVH) holder, groupItemIndex);
-
-                        groupItemStatus.set(groupItemIndex, false);
-                        notifyItemRangeRemoved(holder.getAdapterPosition() + 1, dt.getSubItems
-                                ().size());
-
                     }
 
                 }
@@ -190,7 +163,30 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
 
             onSubItemBindViewHolder(holder, itemStatus.getGroupItemIndex(), itemStatus
                     .getSubItemIndex());
+            holder.itemView.setOnTouchListener(new View.OnTouchListener() {
+                float startIndex = 0;
+                float endIndex = 0;
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
 
+                   switch (event.getAction()) {
+                       case MotionEvent.ACTION_DOWN:{
+                           startIndex = event.getX();
+                       }break;
+                       case  MotionEvent.ACTION_UP:{
+                           endIndex = event.getX();
+                       }break;
+                       case MotionEvent.ACTION_MOVE:{
+                           endIndex = event.getX();
+                       }break;
+                   }
+                   if(endIndex != 0 && Math.abs(endIndex-startIndex) > 5) {
+                       return true;
+                   }else {
+                       return false;
+                   }
+                }
+            });
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -201,9 +197,62 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
             });
 
         }
+    }
+
+    /**
+     * 打开指定位置的子列表
+     *
+     * @param position
+     */
+    public void openSubItem(int position) {
+
+        for (int i = 0; i < groupItemStatus.size(); i++) {
+            Boolean status = groupItemStatus.get(i);
+            if (i != position && status == true) {
+                groupItemStatus.set(i, false);
+                notifyItemRangeRemoved(i, dataTrees.get(i).getSubItems().size());
+            }
+        }
+
+        Boolean selectStatus = groupItemStatus.get(position);
+        if (selectStatus == false) {
+            groupItemStatus.set(position, true);
+            notifyItemRangeInserted(position + 1, dataTrees.get(position).getSubItems
+                    ().size());
+        } else {
+            closeSubItem(position);
+        }
 
 
     }
+
+    /**
+     * 关闭指定位置的子列表
+     *
+     * @param position
+     */
+    public void closeSubItem(int position) {
+
+        groupItemStatus.set(position, false);
+        notifyItemRangeRemoved(position + 1, dataTrees.get(position).getSubItems
+                ().size());
+
+    }
+
+    /**
+     * 关闭所有子列表
+     */
+    public void closeAllSubItem() {
+
+        for (int i = 0; i < groupItemStatus.size(); i++) {
+            Boolean status = groupItemStatus.get(i);
+            if (status == true) {
+                groupItemStatus.set(i, false);
+                notifyItemRangeRemoved(i, dataTrees.get(i).getSubItems().size());
+            }
+        }
+    }
+
 
     @Override
     public final int getItemCount() {
@@ -213,7 +262,6 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
         if (groupItemStatus.size() == 0) {
             return 0;
         }
-
         for (int i = 0; i < dataTrees.size(); i++) {
 
             if (groupItemStatus.get(i)) {
@@ -238,7 +286,6 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
      * Get item' s status include view type, group item index and subitem index.
      *
      * @param position Position
-     *
      */
     private ItemStatus getItemStatusByPosition(int position) {
 
@@ -247,7 +294,7 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
         int count = 0;
         int i = 0;
 
-        for (i = 0; i < groupItemStatus.size(); i++ ) {
+        for (i = 0; i < groupItemStatus.size(); i++) {
 
             if (count == position) {
 
@@ -259,8 +306,8 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
 
                 itemStatus.setViewType(ItemStatus.VIEW_TYPE_SUBITEM);
                 itemStatus.setGroupItemIndex(i - 1);
-                itemStatus.setSubItemIndex(position - ( count - dataTrees.get(i - 1).getSubItems
-                        ().size() ) );
+                itemStatus.setSubItemIndex(position - (count - dataTrees.get(i - 1).getSubItems
+                        ().size()));
                 break;
 
             }
@@ -279,13 +326,12 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
         if (i >= groupItemStatus.size()) {
             itemStatus.setGroupItemIndex(i - 1);
             itemStatus.setViewType(ItemStatus.VIEW_TYPE_SUBITEM);
-            itemStatus.setSubItemIndex(position - ( count - dataTrees.get(i - 1).getSubItems().size
-                    () ) );
+            itemStatus.setSubItemIndex(position - (count - dataTrees.get(i - 1).getSubItems().size
+                    ()));
         }
 
         return itemStatus;
     }
-
 
 
     private static class ItemStatus {
@@ -346,6 +392,10 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
 
         public List<V> getSubItems() {
             return subItems;
+        }
+
+        public void setGroupItem(K groupItem) {
+            this.groupItem = groupItem;
         }
     }
 }
