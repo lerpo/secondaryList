@@ -7,14 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 
+import java.io.LineNumberReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Rusan on 2017/5/15.
@@ -26,6 +30,7 @@ public class RecyclerAdapter extends SecondaryListAdapter<RecyclerAdapter.GroupI
     private Context context;
 
     private List<DataTree<String, String>> dts = new ArrayList<>();
+    private Map<Integer,GroupItemViewHolder> holderMap = new HashMap<>();
 
     public RecyclerAdapter(Context context) {
         this.context = context;
@@ -66,7 +71,8 @@ public class RecyclerAdapter extends SecondaryListAdapter<RecyclerAdapter.GroupI
         YoYo.with(Techniques.SlideInRight).duration(700)
                 .pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT)
                 .interpolate(new AccelerateDecelerateInterpolator())
-                .playOn(groupHolder.actionSub);
+                .playOn(groupHolder.parentLayout);
+        holderMap.put(groupItemIndex,groupHolder);
 
     }
 
@@ -97,11 +103,16 @@ public class RecyclerAdapter extends SecondaryListAdapter<RecyclerAdapter.GroupI
 
         TextView tvGroup;
         Button actionSub;
+        LinearLayout parentLayout;
+        LinearLayout parentLayout2;
+        int tag;
         public GroupItemViewHolder(View itemView) {
             super(itemView);
 
            tvGroup = (TextView) itemView.findViewById(R.id.tv);
            actionSub = (Button) itemView.findViewById(R.id.action_sub);
+           parentLayout = (LinearLayout) itemView.findViewById(R.id.layout_parent);
+           parentLayout2 = (LinearLayout) itemView.findViewById(R.id.layout_parent2);
 
         }
     }
@@ -116,6 +127,8 @@ public class RecyclerAdapter extends SecondaryListAdapter<RecyclerAdapter.GroupI
         }
     }
 
-
+    public Map<Integer, GroupItemViewHolder> getHolderMap() {
+        return holderMap;
+    }
 }
 

@@ -3,13 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-
+    android:background="#f0f0f0"
     >
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:background="#f0f0f0"
     android:id="@+id/layout_parent" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="@color/white"
+        android:id="@+id/layout_parent2" >
     <TextView
         android:id="@+id/tv"
         android:layout_width="wrap_content"
@@ -25,5 +31,6 @@
         android:layout_marginLeft="@dimen/dp_10"
         android:textSize="18sp"
         />
+    </LinearLayout>
 </LinearLayout>
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
@@ -39,10 +40,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SwipeMenuRecyclerView rv = (SwipeMenuRecyclerView) findViewById(R.id.rv);
+        final SwipeMenuRecyclerView rv = (SwipeMenuRecyclerView) findViewById(R.id.rv);
 
         final LinearLayoutManager layoutMgr = new LinearLayoutManager(this);
-        rv.setLayoutManager(layoutMgr);
+         rv.setLayoutManager(layoutMgr);
         rv.setHasFixedSize(true);
         rv.addItemDecoration(new RvDividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
@@ -64,19 +65,17 @@ public class MainActivity extends AppCompatActivity {
                     if(menuPosition == 0) {  //删除操作
                         datas.remove(position);
                         adapter.notifyItemRemoved(position);
-//                        adapter.notifyItemRangeRemoved(position,datas.size()-position);
                         adapter.notifyItemRangeChanged(Math.min(position, datas.size()-position), Math.abs(datas.size()-position) +1);
                     }else {
-                        Toast.makeText(MainActivity.this, "编辑", Toast.LENGTH_SHORT)
+                        Toast.makeText(MainActivity.this, "编辑"+position, Toast.LENGTH_SHORT)
                                 .show();
+                        RecyclerAdapter.GroupItemViewHolder viewHolder = adapter.getHolderMap().get(position);
+//                        TextView tv = viewHolder.itemView.findViewById(R.id.tv);
 
-                        int firstPosition = layoutMgr.findFirstVisibleItemPosition();
-                        View v = layoutMgr.getChildAt(position - firstPosition).findViewById(R.id.action_sub);
-                        YoYo.with(Techniques.FlipInX).duration(700)
-                                .pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT)
-                                .interpolate(new AccelerateDecelerateInterpolator())
-                                .playOn(v);
-
+//                        YoYo.with(Techniques.FlipInX).duration(700)
+//                                .pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT)
+//                                .interpolate(new AccelerateDecelerateInterpolator())
+//                                .playOn(viewHolder.itemView.findViewById(R.id.layout_parent));
                     }
                 }
             }
