@@ -5,9 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +63,10 @@ public class RecyclerAdapter extends SecondaryListAdapter<RecyclerAdapter.GroupI
                 openSubItem(groupItemIndex);
             }
         });
+        YoYo.with(Techniques.SlideInRight).duration(700)
+                .pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT)
+                .interpolate(new AccelerateDecelerateInterpolator())
+                .playOn(groupHolder.actionSub);
 
     }
 
@@ -94,6 +102,7 @@ public class RecyclerAdapter extends SecondaryListAdapter<RecyclerAdapter.GroupI
 
            tvGroup = (TextView) itemView.findViewById(R.id.tv);
            actionSub = (Button) itemView.findViewById(R.id.action_sub);
+
         }
     }
 

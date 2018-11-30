@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -195,7 +198,6 @@ public abstract class SecondaryListAdapter<GVH, SVH extends RecyclerView.ViewHol
 
                 }
             });
-
         }
     }
 

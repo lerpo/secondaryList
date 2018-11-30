@@ -6,9 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
@@ -36,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
         SwipeMenuRecyclerView rv = (SwipeMenuRecyclerView) findViewById(R.id.rv);
 
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        final LinearLayoutManager layoutMgr = new LinearLayoutManager(this);
+        rv.setLayoutManager(layoutMgr);
         rv.setHasFixedSize(true);
         rv.addItemDecoration(new RvDividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
@@ -54,11 +60,24 @@ public class MainActivity extends AppCompatActivity {
                 // 菜单在Item中的Position：
                 int menuPosition = menuBridge.getPosition();
                 if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
-                    Toast.makeText(MainActivity.this, "list第" + position + "; 右侧菜单第" + menuPosition, Toast.LENGTH_SHORT)
-                            .show();
-                } else if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION) {
-                    Toast.makeText(MainActivity.this, "list第" + position + "; 左侧菜单第" + menuPosition, Toast.LENGTH_SHORT)
-                            .show();
+
+                    if(menuPosition == 0) {  //删除操作
+                        datas.remove(position);
+                        adapter.notifyItemRemoved(position);
+//                        adapter.notifyItemRangeRemoved(position,datas.size()-position);
+                        adapter.notifyItemRangeChanged(Math.min(position, datas.size()-position), Math.abs(datas.size()-position) +1);
+                    }else {
+                        Toast.makeText(MainActivity.this, "编辑", Toast.LENGTH_SHORT)
+                                .show();
+
+                        int firstPosition = layoutMgr.findFirstVisibleItemPosition();
+                        View v = layoutMgr.getChildAt(position - firstPosition).findViewById(R.id.action_sub);
+                        YoYo.with(Techniques.FlipInX).duration(700)
+                                .pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT)
+                                .interpolate(new AccelerateDecelerateInterpolator())
+                                .playOn(v);
+
+                    }
                 }
             }
         });
@@ -89,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     {
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 500; i++) {
             final int finalI = i;
             datas.add(new SecondaryListAdapter.DataTree<String, String>(String.valueOf(i), new
                     ArrayList<String>() {{
